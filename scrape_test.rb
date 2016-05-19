@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'nokogiri'
 require 'open-uri'
+require_relative 'scrape_helper'
 
 url = "http://floridagators.com/roster.aspx?roster=241&path=football"
 doc = Nokogiri::HTML(open(url, 
@@ -16,16 +17,18 @@ doc = Nokogiri::HTML(open(url,
 # weight = doc.css(".roster_dgrd_weight").text
 # hs = doc.css(".roster_dgrd_hometownhighschool").text
 
-doc.css('.roster_dgrd_item').each do |tr|
-	jersey = tr.at_css(".roster_dgrd_no").text
-	name = tr.at_css(".roster_dgrd_rp_position_short").text
-	pos = tr.at_css(".roster_dgrd_full_name").text
-	height = tr.at_css(".roster_dgrd_height").text
-	year = tr.at_css(".roster_dgrd_academic_year").text
-	weight = tr.at_css(".roster_dgrd_rp_weight").text
-	hs = tr.at_css(".roster_dgrd_hometownhighschool").text
-	puts "list 1: #{jersey} - #{name} - #{pos} - #{height} - #{weight} - #{year} - #{hs}"
-end
+# doc.css('.roster_dgrd_item').each do |tr|
+# 	jersey = tr.at_css(".roster_dgrd_no").text
+# 	name = tr.at_css(".roster_dgrd_rp_position_short").text
+# 	pos = tr.at_css(".roster_dgrd_full_name").text
+# 	height = tr.at_css(".roster_dgrd_height").text
+# 	year = tr.at_css(".roster_dgrd_academic_year").text
+# 	weight = tr.at_css(".roster_dgrd_rp_weight").text
+# 	hs = tr.at_css(".roster_dgrd_hometownhighschool").text
+# 	puts "list 1: #{jersey} - #{name} - #{pos} - #{height} - #{weight} - #{year} - #{hs}"
+# end
+ds = ScrapeHelper::DataScrubber.new
+
 
 doc.css('.roster_dgrd_alt').each do |tr|
 	jersey = tr.at_css(".roster_dgrd_no").text
@@ -34,7 +37,10 @@ doc.css('.roster_dgrd_alt').each do |tr|
 	height = tr.at_css(".roster_dgrd_height").text
 	year = tr.at_css(".roster_dgrd_academic_year").text
 	weight = tr.at_css(".roster_dgrd_rp_weight").text
-	hs = tr.at_css(".roster_dgrd_hometownhighschool").text
+	hometown_and_highschool = tr.at_css(".roster_dgrd_hometownhighschool").text
+	ds.origin_handler(hometown_and_highschool)
+	# hs = hometown_and_highschool
 
-	puts "list 2: #{jersey} - #{name} - #{pos} - #{height} - #{weight} - #{year} - #{hs}"
+	# puts "list 2: #{jersey} - #{name} - #{pos} - #{height} - #{weight} - #{year} - #{hs}"
+	
 end
