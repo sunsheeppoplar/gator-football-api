@@ -21,12 +21,12 @@ player_rows.each_with_index do |row, index|
 		next
 	end
 
-	jersey = row.at_css(".roster_dgrd_no").text
-	name = row.at_css(".roster_dgrd_rp_position_short").text
-	pos = row.at_css(".roster_dgrd_full_name").text
-	height = row.at_css(".roster_dgrd_height").text
-	year = row.at_css(".roster_dgrd_academic_year").text
-	weight = row.at_css(".roster_dgrd_rp_weight").text
+	jersey = row.at_css(".roster_dgrd_no").text.strip
+	name = row.at_css(".roster_dgrd_rp_position_short").text.strip
+	pos = row.at_css(".roster_dgrd_full_name").text.strip
+	height = row.at_css(".roster_dgrd_height").text.strip
+	year = row.at_css(".roster_dgrd_academic_year").text.strip
+	weight = row.at_css(".roster_dgrd_rp_weight").text.strip
 	hometown_and_highschool = ds.origin_handler(row.at_css(".roster_dgrd_hometownhighschool").text)
 	incomplete_hometown = hometown_and_highschool[0]
 	complete_hometown = ds.check_for_state(incomplete_hometown)
