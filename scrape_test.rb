@@ -2,45 +2,33 @@ require 'rubygems'
 require 'nokogiri'
 require 'open-uri'
 require_relative 'scrape_helper'
+require 'pry'
 
-url = "http://floridagators.com/roster.aspx?roster=241&path=football"
-doc = Nokogiri::HTML(open(url, 
-		"User-Agent" => "chicken",
-		"From" => "chicken",
-		"Referer" => "http://www.ruby-lang.org/"
+url = "http://floridagators.com/roster.aspx?roster=400&path=football"
+doc = Nokogiri::HTML(open(url,
+	"User-Agent" => "chicken",
+	"From" => "chicken",
+	"Referer" => "http://www.ruby-lang.org/"
 	))
 
-# pos = doc.css(".roster_dgrd_rp_position_short").text
-# name = doc.css(".roster_dgrd_full_name").text
-# height = doc.css(".roster_dgrd_height").text
-# year = doc.css(".roster_dgrd_academic_year").text
-# weight = doc.css(".roster_dgrd_weight").text
-# hs = doc.css(".roster_dgrd_hometownhighschool").text
-
-# doc.css('.roster_dgrd_item').each do |tr|
-# 	jersey = tr.at_css(".roster_dgrd_no").text
-# 	name = tr.at_css(".roster_dgrd_rp_position_short").text
-# 	pos = tr.at_css(".roster_dgrd_full_name").text
-# 	height = tr.at_css(".roster_dgrd_height").text
-# 	year = tr.at_css(".roster_dgrd_academic_year").text
-# 	weight = tr.at_css(".roster_dgrd_rp_weight").text
-# 	hs = tr.at_css(".roster_dgrd_hometownhighschool").text
-# 	puts "list 1: #{jersey} - #{name} - #{pos} - #{height} - #{weight} - #{year} - #{hs}"
-# end
 ds = ScrapeHelper::DataScrubber.new
 
+player_rows = doc.css('table')[0].css('tr')
 
-doc.css('.roster_dgrd_alt').each do |tr|
-	jersey = tr.at_css(".roster_dgrd_no").text
-	name = tr.at_css(".roster_dgrd_rp_position_short").text
-	pos = tr.at_css(".roster_dgrd_full_name").text
-	height = tr.at_css(".roster_dgrd_height").text
-	year = tr.at_css(".roster_dgrd_academic_year").text
-	weight = tr.at_css(".roster_dgrd_rp_weight").text
-	hometown_and_highschool = tr.at_css(".roster_dgrd_hometownhighschool").text
-	ds.origin_handler(hometown_and_highschool)
-	# hs = hometown_and_highschool
+player_rows.each_with_index do |row, index|
+	# skip the description row
+	if index == 0
+		next
+	end
 
-	# puts "list 2: #{jersey} - #{name} - #{pos} - #{height} - #{weight} - #{year} - #{hs}"
-	
+	jersey = row.at_css(".roster_dgrd_no").text
+	name = row.at_css(".roster_dgrd_rp_position_short").text
+	pos = row.at_css(".roster_dgrd_full_name").text
+	height = row.at_css(".roster_dgrd_height").text
+	year = row.at_css(".roster_dgrd_academic_year").text
+	weight = row.at_css(".roster_dgrd_rp_weight").text
+	hometown_and_highschool = ds.origin_handler(row.at_css(".roster_dgrd_hometownhighschool").text)
+	incomplete_hometown = hometown_and_highschool[0]
+	complete_hometown = ds.check_for_state(incomplete_hometown)
+	puts "#{index}. - #{jersey} - #{name} - #{pos} - #{height} - #{weight} - #{year} - #{complete_hometown} "
 end
