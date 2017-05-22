@@ -2,7 +2,6 @@ require 'rubygems'
 require 'nokogiri'
 require 'open-uri'
 require_relative 'scrape_helper'
-require 'pry'
 
 url = "http://floridagators.com/roster.aspx?roster=400&path=football"
 doc = Nokogiri::HTML(open(url,
